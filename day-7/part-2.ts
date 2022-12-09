@@ -14,12 +14,6 @@ interface Dir {
   parent: null | string;
 }
 
-interface DirWithWeight {
-  id: string;
-  name: string;
-  weight: number;
-}
-
 type FileOrDir = File | Dir;
 
 const formatOutput = (output: string[], parent: string): FileOrDir[] => {
@@ -177,11 +171,20 @@ if (processed instanceof Error) {
 
 const dirCalculator = createDirCalculator(processed);
 
-const filteredAndSummed = processed
+const sorted = processed
   .filter((item): item is Dir => item.type === 'dir')
   .map(item => item.id)
   .map(dirCalculator)
-  .filter(item => item <= 100000)
-  .reduce((sum, next) => sum + next, 0);
+  .sort((a, b) => b - a);
 
-console.log(filteredAndSummed);
+const [root] = sorted;
+const totalDiskSpace = 70000000;
+const requiredDiskSpace = 30000000;
+const freeDiskSpace = totalDiskSpace - root;
+const minimumDeletionSize = requiredDiskSpace - freeDiskSpace;
+
+const [dirSizeToDelete] = sorted
+  .filter(item => item >= minimumDeletionSize)
+  .sort((a, b) => a - b);
+
+console.log(dirSizeToDelete);
