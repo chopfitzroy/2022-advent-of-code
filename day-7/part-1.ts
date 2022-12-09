@@ -14,12 +14,6 @@ interface Dir {
   parent: null | string;
 }
 
-interface DirWithWeight {
-  id: string;
-  name: string;
-  weight: number;
-}
-
 type FileOrDir = File | Dir;
 
 const formatOutput = (output: string[], parent: string): FileOrDir[] => {
